@@ -31,12 +31,15 @@ def login():
     if not user or not user.check_password(data['password']):
         return jsonify({'msg': 'Usuario o contraseña incorrectos'}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     return jsonify({'token': access_token}), 200
 
 @auth_bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     return jsonify({'id': user.id, 'username': user.username}), 200
+
+     
+          

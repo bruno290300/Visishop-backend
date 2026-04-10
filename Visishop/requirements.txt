@@ -6,3 +6,4 @@ Flask-WTF
 Flask-Cors
 python-dotenv
 pytest
+SpeechRecognition
