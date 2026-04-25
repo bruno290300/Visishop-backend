@@ -1,0 +1,69 @@
+import { useState } from "react";
+import VoiceInputButton from "./VoiceInputButton";
+
+function ProductInputForm({ onAddProduct }) {
+  const [name, setName] = useState("");
+  const [barcode, setBarcode] = useState("");
+  const [message, setMessage] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const nextName = name.trim();
+    const nextBarcode = barcode.trim();
+
+    if (!nextName || !nextBarcode) {
+      setMessage("Completa nombre y codigo para agregar el producto.");
+      return;
+    }
+
+    onAddProduct({
+      name: nextName,
+      barcode: nextBarcode,
+    });
+    setName("");
+    setBarcode("");
+    setMessage("Producto agregado correctamente.");
+  }
+
+  function handleVoiceTranscript(transcript) {
+    setName(transcript);
+    setMessage("Nombre completado por voz. Ahora ingresa o confirma el codigo.");
+  }
+
+  return (
+    <div className="space-y-3">
+      <form className="group grid gap-2 sm:grid-cols-[1.2fr_1fr_auto]" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          placeholder="Nombre del producto"
+          className="w-full rounded-2xl border border-white/20 bg-slate-900/60 px-4 py-3 text-sm text-slate-100 outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/30 group-hover:border-white/30"
+        />
+        <input
+          type="text"
+          value={barcode}
+          onChange={(event) => setBarcode(event.target.value)}
+          placeholder="Codigo de barras"
+          className="w-full rounded-2xl border border-white/20 bg-slate-900/60 px-4 py-3 text-sm text-slate-100 outline-none transition duration-300 placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/30"
+        />
+        <button
+          type="submit"
+          className="rounded-2xl bg-gradient-to-r from-cyan-300 to-teal-300 px-4 py-3 text-sm font-semibold text-slate-900 transition duration-300 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98]"
+        >
+          Guardar
+        </button>
+      </form>
+
+      <VoiceInputButton onTranscript={handleVoiceTranscript} />
+
+      {message && (
+        <p className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default ProductInputForm;
