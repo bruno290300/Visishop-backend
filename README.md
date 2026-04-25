@@ -52,36 +52,4 @@ Pasos:
 
 El backend escuchará en `http://127.0.0.1:5000` por defecto.
 
-### Frontend (`visishop-mobile/`)
 
-Requisitos:
-- Node ≥ 18 LTS
-- `npm` o `yarn`
-- Expo CLI (`npm install -g expo-cli`)
-
-Pasos:
-
-1. Instalar dependencias  
-   ```bash
-   cd visishop-mobile
-   npm install
-   ```
-
-2. Ajustar la URL del backend  
-   - Edita `src/config.js` con la IP LAN de tu computadora:  
-     ```js
-     const SERVER_URL = 'http://192.168.0.15:5000';
-     ```
-
-3. Iniciar el cliente  
-   ```bash
-   npm start
-   ```
-
-4. Abrir la aplicación con Expo Go en tu móvil o emulador (Android / iOS).
-
-## Notas
-
-- Cuando uses el backend en producción, configura `FLASK_ENV=production` y un `SECRET_KEY` seguro.
-- En dispositivos móviles, no uses `localhost` para apuntar al backend; usa la IP LAN o un túnel (ngrok, localtunnel, etc.).
-- La cámara requiere permisos en el dispositivo para escanear códigos QR.
