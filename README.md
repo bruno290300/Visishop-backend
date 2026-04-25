@@ -3,14 +3,14 @@
 Este workspace contiene dos partes:
 
 - `Visishop/`: backend Flask con autenticación, catálogo, listas de usuario y verificación de códigos escaneados.
-- `visishop-mobile/`: frontend Expo/React Native para probar el MVP en Expo Go.
+- `visishop-web/`: frontend web (React + Vite + Tailwind) con flujo mock/local para el MVP.
 
 ## Instalación y puesta en marcha
 
 ### Backend (`Visishop/`)
 
 Requisitos:
-- Python 3.10 +  
+- Python 3.10+  
 - `pip` (normalmente incluido con Python)
 - `git` (para clonar el repositorio)
 
@@ -18,7 +18,7 @@ Pasos:
 
 1. Clonar el repositorio  
    ```bash
-   git clone https://github.com/tu_usuario/Visishop-backend.git
+   git clone https://github.com/bruno290300/Visishop-backend.git
    cd Visishop-backend/Visishop
    ```
 
@@ -51,5 +51,30 @@ Pasos:
    ```
 
 El backend escuchará en `http://127.0.0.1:5000` por defecto.
+
+### Frontend Web (`visishop-web/`)
+
+Requisitos:
+- Node 18+ (LTS recomendado)
+- `npm`
+
+Pasos:
+
+1. Instalar dependencias  
+   ```bash
+   cd visishop-web
+   npm install
+   ```
+
+2. Iniciar el servidor de desarrollo  
+   ```bash
+   npm run dev
+   ```
+
+3. Abrir la URL que muestra Vite (por defecto suele ser `https://localhost:5173`).
+
+Notas web:
+- Se sirve en HTTPS con certificado autofirmado (el navegador puede mostrar una advertencia).
+- El flujo actual usa mocks/localStorage (todavía no consume el backend Flask).
 
 
