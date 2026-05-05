@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import AuthCard from "../features/auth/components/AuthCard";
 import { AUTH_MODES } from "../features/auth/constants";
+import LoginCard from "../features/auth/components/LoginCard";
+import RegisterCard from "../features/auth/components/RegisterCard";
 import useAuthForms from "../features/auth/hooks/useAuthForms";
 import { useAuth } from "../store/AuthContext";
 
@@ -9,7 +10,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const { login, register } = useAuth();
+  const { login, register, loginWithGoogle } = useAuth();
 
   const authForms = useAuthForms();
 
@@ -48,7 +49,7 @@ function AuthPage() {
     authForms.login.touchForm();
 
     if (!authForms.login.isValid) {
-      setErrorMessage("Corrige los campos marcados para continuar.");
+      setErrorMessage("Corregí los campos marcados para continuar.");
       return;
     }
 
@@ -57,7 +58,7 @@ function AuthPage() {
       const response = await login(authForms.login.values);
       setSuccessMessage(`Hola ${response.name}, ingreso exitoso.`);
     } catch (error) {
-      setErrorMessage(error.message || "Ocurrio un error inesperado.");
+      setErrorMessage(error.message || "Ocurrió un error inesperado.");
     } finally {
       setLoading(false);
     }
@@ -69,7 +70,7 @@ function AuthPage() {
     authForms.register.touchForm();
 
     if (!authForms.register.isValid) {
-      setErrorMessage("Revisa los datos para completar el registro.");
+      setErrorMessage("Revisá los datos para completar el registro.");
       return;
     }
 
@@ -84,23 +85,52 @@ function AuthPage() {
     }
   }
 
+  async function handleGoogleSignIn() {
+    clearFeedback();
+
+    const identifier =
+      mode === AUTH_MODES.LOGIN
+        ? authForms.login.values.name
+        : authForms.register.values.name;
+
+    try {
+      setLoading(true);
+      const response = await loginWithGoogle({ name: identifier });
+      setSuccessMessage(`Hola ${response.name}, ingreso exitoso.`);
+    } catch (error) {
+      setErrorMessage(error.message || "No se pudo completar el ingreso con Google.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="auth-shell flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <AuthCard
-        mode={mode}
-        onModeChange={handleModeChange}
-        loading={loading}
-        errorMessage={errorMessage}
-        successMessage={successMessage}
-        loginState={loginState}
-        registerState={registerState}
-        onLoginSubmit={handleLoginSubmit}
-        onRegisterSubmit={handleRegisterSubmit}
-        onLoginChange={authForms.login.onChange}
-        onRegisterChange={authForms.register.onChange}
-        onLoginBlur={authForms.login.onBlur}
-        onRegisterBlur={authForms.register.onBlur}
-      />
+      {mode === AUTH_MODES.LOGIN ? (
+        <LoginCard
+          loading={loading}
+          errorMessage={errorMessage}
+          successMessage={successMessage}
+          loginState={loginState}
+          onLoginSubmit={handleLoginSubmit}
+          onLoginChange={authForms.login.onChange}
+          onLoginBlur={authForms.login.onBlur}
+          onSwitchToRegister={() => handleModeChange(AUTH_MODES.REGISTER)}
+          onGoogleSignIn={handleGoogleSignIn}
+        />
+      ) : (
+        <RegisterCard
+          loading={loading}
+          errorMessage={errorMessage}
+          successMessage={successMessage}
+          registerState={registerState}
+          onRegisterSubmit={handleRegisterSubmit}
+          onRegisterChange={authForms.register.onChange}
+          onRegisterBlur={authForms.register.onBlur}
+          onSwitchToLogin={() => handleModeChange(AUTH_MODES.LOGIN)}
+          onGoogleSignIn={handleGoogleSignIn}
+        />
+      )}
     </div>
   );
 }

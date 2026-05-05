@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
     await wait(700);
 
     if (!name || !password) {
-      throw new Error("Completa usuario y contraseña.");
+      throw new Error("Completá usuario y contraseña.");
     }
 
     const users = readUsers();
@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
     );
 
     if (alreadyExists) {
-      throw new Error("Ese usuario ya existe. Inicia sesión.");
+      throw new Error("Ese usuario ya existe. Iniciá sesión.");
     }
 
     const nextUser = {
@@ -114,6 +114,42 @@ export function AuthProvider({ children }) {
     return sessionUser;
   }
 
+  async function loginWithGoogle(payload) {
+    const identifier = String(payload?.name || "").trim();
+
+    await wait(450);
+
+    if (!identifier) {
+      throw new Error("Ingresá tu email/usuario para continuar con Google.");
+    }
+
+    const users = readUsers();
+    const normalized = normalizeUserName(identifier);
+
+    let foundUser = users.find(
+      (user) => normalizeUserName(user.name) === normalized
+    );
+
+    if (!foundUser) {
+      foundUser = {
+        id: `usr-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
+        name: identifier,
+        password: null,
+        provider: "google",
+      };
+      writeUsers([...users, foundUser]);
+    } else if (!foundUser.provider) {
+      foundUser = { ...foundUser, provider: "google" };
+      writeUsers(users.map((user) => (user.id === foundUser.id ? foundUser : user)));
+    }
+
+    const sessionUser = { id: foundUser.id, name: foundUser.name };
+    writeSession(sessionUser);
+    setCurrentUser(sessionUser);
+
+    return sessionUser;
+  }
+
   function logout() {
     clearSession();
     setCurrentUser(null);
@@ -125,6 +161,7 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(currentUser),
       register,
       login,
+      loginWithGoogle,
       logout,
     }),
     [currentUser]

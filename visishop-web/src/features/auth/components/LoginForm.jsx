@@ -12,14 +12,15 @@ function LoginForm({
   return (
     <form className="mt-6 space-y-1" onSubmit={onSubmit} noValidate>
       <FormField
-        label="Usuario"
+        label="Usuario o email"
         name="name"
-        placeholder="Tu nombre de usuario"
+        placeholder="tu@email.com"
         value={values.name}
         error={touched.name ? errors.name : ""}
         onChange={onChange}
         onBlur={onBlur}
         disabled={loading}
+        autoComplete="username"
       />
 
       <FormField
@@ -32,7 +33,19 @@ function LoginForm({
         onChange={onChange}
         onBlur={onBlur}
         disabled={loading}
+        autoComplete="current-password"
       />
+
+      <div className="flex justify-end pt-1">
+        <button
+          type="button"
+          disabled
+          className="text-xs font-semibold text-slate-300/80 underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+          title="Próximamente"
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
 
       <button
         type="submit"

@@ -20,18 +20,21 @@ function RegisterForm({
         onChange={onChange}
         onBlur={onBlur}
         disabled={loading}
+        autoComplete="username"
       />
 
       <FormField
         label="Clave"
         name="password"
         type="password"
-        placeholder="Minimo 4 caracteres"
+        placeholder="Mínimo 4 caracteres"
         value={values.password}
         error={touched.password ? errors.password : ""}
+        helperText="Usá letras, números y un símbolo."
         onChange={onChange}
         onBlur={onBlur}
         disabled={loading}
+        autoComplete="new-password"
       />
 
       <button
