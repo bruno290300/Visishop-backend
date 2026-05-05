@@ -22,6 +22,9 @@ def create_app(test_config=None):
     jwt.init_app(app)
     cors.init_app(app)
     csrf.init_app(app)
+    csrf.exempt(auth_bp)
+    csrf.exempt(main_bp)
+    csrf.exempt(routes_bp)
 
     # Registrar blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')

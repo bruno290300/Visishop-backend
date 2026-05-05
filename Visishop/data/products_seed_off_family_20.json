@@ -1,23 +1,30 @@
 [
-  { "nombre": "OFF! Family aerosol repelente de insectos 170 g", "codigo_barras": "7790520009494" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 120 g", "codigo_barras": "7791234500017" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 200 g", "codigo_barras": "7791234500024" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 250 g", "codigo_barras": "7791234500031" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 300 g", "codigo_barras": "7791234500048" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 170 g pack x2", "codigo_barras": "7791234500055" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 170 g pack x3", "codigo_barras": "7791234500062" },
-  { "nombre": "OFF! Family aerosol repelente de insectos 170 g pack x6", "codigo_barras": "7791234500079" },
-  { "nombre": "OFF! Family locion repelente 60 ml", "codigo_barras": "7791234500086" },
-  { "nombre": "OFF! Family locion repelente 120 ml", "codigo_barras": "7791234500093" },
-  { "nombre": "OFF! Family crema repelente 60 g", "codigo_barras": "7791234500109" },
-  { "nombre": "OFF! Family crema repelente 100 g", "codigo_barras": "7791234500116" },
-  { "nombre": "OFF! Family spray repelente 100 ml", "codigo_barras": "7791234500123" },
-  { "nombre": "OFF! Family spray repelente 200 ml", "codigo_barras": "7791234500130" },
-  { "nombre": "OFF! Family aerosol repelente sin fragancia 170 g", "codigo_barras": "7791234500147" },
-  { "nombre": "OFF! Family aerosol repelente con citronella 170 g", "codigo_barras": "7791234500154" },
-  { "nombre": "OFF! Family locion repelente con aloe vera 120 ml", "codigo_barras": "7791234500161" },
-  { "nombre": "OFF! Family spray repelente con citronella 200 ml", "codigo_barras": "7791234500178" },
-  { "nombre": "OFF! Family toallitas repelentes x10", "codigo_barras": "7791234500185" },
-  { "nombre": "OFF! Family toallitas repelentes x20", "codigo_barras": "7791234500192" }
-]
+  { "nombre": "Coca Cola original 500 ml", "codigo_barras": "7790895001011" },
+  { "nombre": "Coca Cola original 1.5 l", "codigo_barras": "7790895001028" },
+  { "nombre": "Sprite lima limon 500 ml", "codigo_barras": "7790895001035" },
+  { "nombre": "Fanta naranja 500 ml", "codigo_barras": "7790895001042" },
 
+  { "nombre": "Leche entera La Serenisima 1 l", "codigo_barras": "7793940001234" },
+  { "nombre": "Leche descremada La Serenisima 1 l", "codigo_barras": "7793940001235" },
+  { "nombre": "Yogur bebible vainilla 1 l", "codigo_barras": "7793940001236" },
+  { "nombre": "Queso crema clasico 300 g", "codigo_barras": "7793940001237" },
+
+  { "nombre": "Arroz Gallo oro 1 kg", "codigo_barras": "7790070412345" },
+  { "nombre": "Fideos spaghetti Matarazzo 500 g", "codigo_barras": "7790580100012" },
+  { "nombre": "Harina 000 Morixe 1 kg", "codigo_barras": "7792170001003" },
+  { "nombre": "Azucar Ledesma clasica 1 kg", "codigo_barras": "7792540001007" },
+
+  { "nombre": "Lavandina Ayudin original 1 l", "codigo_barras": "7793253001001" },
+  { "nombre": "Detergente Magistral limon 750 ml", "codigo_barras": "7791290011002" },
+  { "nombre": "Suavizante Vivere clasico 900 ml", "codigo_barras": "7791130001008" },
+  { "nombre": "Esponja de cocina multiuso", "codigo_barras": "7795001001004" },
+
+  { "nombre": "Shampoo Sedal brillo 340 ml", "codigo_barras": "7791293021001" },
+  { "nombre": "Jabon Dove original 90 g", "codigo_barras": "7791293021002" },
+  { "nombre": "Pasta dental Colgate total 90 g", "codigo_barras": "7793100111003" },
+  { "nombre": "Papel higienico Elite pack x4", "codigo_barras": "7798030001005" },
+
+  { "nombre": "OFF! Family aerosol repelente de insectos 170 g", "codigo_barras": "7790520009494" },
+
+  { "nombre": "Saladix caja jamon 100 g", "codigo_barras": "7790580716707" }
+]

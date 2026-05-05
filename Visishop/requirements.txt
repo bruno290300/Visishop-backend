@@ -7,3 +7,5 @@ Flask-Cors
 python-dotenv
 pytest
 SpeechRecognition
+google-auth
+requests

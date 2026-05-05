@@ -16,3 +16,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///visishop.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = env_flag('SQLALCHEMY_TRACK_MODIFICATIONS', False)
     WTF_CSRF_ENABLED = env_flag('WTF_CSRF_ENABLED', False)
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')

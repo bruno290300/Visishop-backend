@@ -11,7 +11,7 @@ function LoginCard({
   onLoginChange,
   onLoginBlur,
   onSwitchToRegister,
-  onGoogleSignIn,
+  onGoogleCredential,
 }) {
   return (
     <section className="card-enter relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl shadow-slate-950/50 backdrop-blur-xl">
@@ -60,7 +60,7 @@ function LoginCard({
           </div>
 
           <div className="mt-4 flex justify-center">
-            <GoogleButton loading={loading} onClick={onGoogleSignIn} label="Google" />
+            <GoogleButton disabled={loading} onCredential={onGoogleCredential} />
           </div>
         </div>
 

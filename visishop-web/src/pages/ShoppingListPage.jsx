@@ -61,7 +61,7 @@ function ShoppingListPage() {
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center justify-center">
         <main className="app-shell w-full rounded-[2rem] border border-white/20 bg-slate-950/65 p-4 shadow-2xl shadow-slate-950/60 backdrop-blur-xl sm:p-6">
           <header className="app-block mb-4 rounded-3xl p-5">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <AppLogo size="sm" className="mb-2" />
                 <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
@@ -74,11 +74,11 @@ function ShoppingListPage() {
                   Sesión: {currentUser?.name || "Usuario"}
                 </p>
               </div>
-              <div className="flex items-start gap-2">
+              <div className="flex w-full flex-wrap items-stretch gap-2 sm:w-auto sm:flex-nowrap sm:items-start">
                 <button
                   type="button"
                   onClick={logout}
-                  className="rounded-2xl border border-cyan-300/35 bg-cyan-300/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-300/20"
+                  className="min-w-0 flex-1 rounded-2xl border border-cyan-300/35 bg-cyan-300/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-300/20 sm:flex-none"
                 >
                   Log out
                 </button>
@@ -87,7 +87,7 @@ function ShoppingListPage() {
                   onClick={handleOpenClearModal}
                   disabled={!products.length}
                   className={[
-                    "rounded-2xl border px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition",
+                    "min-w-0 flex-1 rounded-2xl border px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition sm:flex-none",
                     products.length
                       ? "border-red-300/35 bg-red-300/10 text-red-100 hover:bg-red-300/20"
                       : "cursor-not-allowed border-white/15 bg-white/5 text-slate-500",
@@ -95,7 +95,7 @@ function ShoppingListPage() {
                 >
                   Limpiar lista
                 </button>
-                <div className="rounded-2xl border border-white/15 bg-white/5 px-3 py-2 text-right">
+                <div className="w-full rounded-2xl border border-white/15 bg-white/5 px-3 py-2 text-left sm:w-auto sm:min-w-[96px] sm:text-right">
                   <p className="text-[0.65rem] uppercase tracking-[0.14em] text-slate-400">Progreso</p>
                   <p className="text-lg font-semibold text-cyan-100">{progress}%</p>
                 </div>

@@ -1,35 +1,9 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { getApiBaseUrlCandidates } from "../features/auth/services/googleIdentity";
 
 const AuthContext = createContext(null);
 
-const USERS_STORAGE_KEY = "visishop.auth.users.v1";
 const SESSION_STORAGE_KEY = "visishop.auth.session.v1";
-
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function normalizeUserName(name) {
-  return String(name || "").trim().toLowerCase();
-}
-
-function readUsers() {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = window.localStorage.getItem(USERS_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeUsers(users) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-}
 
 function readSession() {
   if (typeof window === "undefined") return null;
@@ -54,96 +28,94 @@ function clearSession() {
   window.localStorage.removeItem(SESSION_STORAGE_KEY);
 }
 
+function normalizeCredentials(payload) {
+  const normalizedName = String(payload?.name || "").trim();
+  return {
+    name: normalizedName,
+    username: normalizedName.toLowerCase(),
+    password: String(payload?.password || "").trim(),
+  };
+}
+
+async function postJson(path, payload) {
+  const candidates = getApiBaseUrlCandidates();
+  let lastError = null;
+
+  for (const baseUrl of candidates) {
+    try {
+      const response = await fetch(`${baseUrl}${path}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.msg || "No se pudo completar la solicitud.");
+      }
+
+      return data;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw new Error(lastError?.message || "No se pudo conectar con el backend.");
+}
+
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(readSession);
 
   async function register(payload) {
-    const name = String(payload?.name || "").trim();
-    const password = String(payload?.password || "").trim();
-
-    await wait(700);
+    const { name, username, password } = normalizeCredentials(payload);
 
     if (!name || !password) {
-      throw new Error("Completá usuario y contraseña.");
+      throw new Error("Completa usuario y contrasena.");
     }
 
-    const users = readUsers();
-    const normalized = normalizeUserName(name);
-    const alreadyExists = users.some(
-      (user) => normalizeUserName(user.name) === normalized
-    );
+    await postJson("/auth/register", { username, password });
 
-    if (alreadyExists) {
-      throw new Error("Ese usuario ya existe. Iniciá sesión.");
-    }
-
-    const nextUser = {
-      id: `usr-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
-      name,
-      password,
-    };
-
-    const nextUsers = [...users, nextUser];
-    writeUsers(nextUsers);
-    writeSession({ id: nextUser.id, name: nextUser.name });
-    setCurrentUser({ id: nextUser.id, name: nextUser.name });
-
-    return { id: nextUser.id, name: nextUser.name };
-  }
-
-  async function login(payload) {
-    const name = String(payload?.name || "").trim();
-    const password = String(payload?.password || "").trim();
-
-    await wait(500);
-
-    const users = readUsers();
-    const normalized = normalizeUserName(name);
-    const foundUser = users.find(
-      (user) => normalizeUserName(user.name) === normalized
-    );
-
-    if (!foundUser || foundUser.password !== password) {
-      throw new Error("Usuario o contraseña incorrectos.");
-    }
-
-    const sessionUser = { id: foundUser.id, name: foundUser.name };
+    const sessionUser = { id: `usr-${username}`, name, provider: "password" };
     writeSession(sessionUser);
     setCurrentUser(sessionUser);
-
     return sessionUser;
   }
 
-  async function loginWithGoogle(payload) {
-    const identifier = String(payload?.name || "").trim();
+  async function login(payload) {
+    const { name, username, password } = normalizeCredentials(payload);
 
-    await wait(450);
-
-    if (!identifier) {
-      throw new Error("Ingresá tu email/usuario para continuar con Google.");
+    if (!name || !password) {
+      throw new Error("Completa usuario y contrasena.");
     }
 
-    const users = readUsers();
-    const normalized = normalizeUserName(identifier);
+    const data = await postJson("/auth/login", { username, password });
+    const sessionUser = {
+      id: data.user?.id ? String(data.user.id) : `usr-${username}`,
+      name,
+      token: data.token || "",
+      provider: "password",
+    };
+    writeSession(sessionUser);
+    setCurrentUser(sessionUser);
+    return sessionUser;
+  }
 
-    let foundUser = users.find(
-      (user) => normalizeUserName(user.name) === normalized
-    );
-
-    if (!foundUser) {
-      foundUser = {
-        id: `usr-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
-        name: identifier,
-        password: null,
-        provider: "google",
-      };
-      writeUsers([...users, foundUser]);
-    } else if (!foundUser.provider) {
-      foundUser = { ...foundUser, provider: "google" };
-      writeUsers(users.map((user) => (user.id === foundUser.id ? foundUser : user)));
+  async function loginWithGoogleCredential(credential) {
+    if (!credential) {
+      throw new Error("Google no devolvio una credencial valida.");
     }
 
-    const sessionUser = { id: foundUser.id, name: foundUser.name };
+    const data = await postJson("/auth/google", { credential });
+    const sessionUser = {
+      id: String(data.user?.id || ""),
+      name: data.user?.name || data.user?.email || "Usuario",
+      email: data.user?.email || "",
+      provider: "google",
+      token: data.token || "",
+    };
+
     writeSession(sessionUser);
     setCurrentUser(sessionUser);
 
@@ -151,8 +123,16 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    if (typeof window !== "undefined") {
+      window.google?.accounts?.id?.disableAutoSelect?.();
+    }
+
     clearSession();
     setCurrentUser(null);
+    // Limpia cualquier estado temporal de auth que pudo quedar cacheado por el navegador.
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("visishop.auth.last_error");
+    }
   }
 
   const value = useMemo(
@@ -161,7 +141,7 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(currentUser),
       register,
       login,
-      loginWithGoogle,
+      loginWithGoogleCredential,
       logout,
     }),
     [currentUser]

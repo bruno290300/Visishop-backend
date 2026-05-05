@@ -3,6 +3,7 @@ import { AUTH_MODES } from "../features/auth/constants";
 import LoginCard from "../features/auth/components/LoginCard";
 import RegisterCard from "../features/auth/components/RegisterCard";
 import useAuthForms from "../features/auth/hooks/useAuthForms";
+import { validateLogin, validateRegister } from "../features/auth/validators";
 import { useAuth } from "../store/AuthContext";
 
 function AuthPage() {
@@ -10,7 +11,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const { login, register, loginWithGoogle } = useAuth();
+  const { login, register, loginWithGoogleCredential } = useAuth();
 
   const authForms = useAuthForms();
 
@@ -43,22 +44,33 @@ function AuthPage() {
     setMode(nextMode);
   }
 
+  function readFormCredentials(formElement) {
+    const formData = new FormData(formElement);
+    return {
+      name: String(formData.get("name") || ""),
+      password: String(formData.get("password") || ""),
+    };
+  }
+
   async function handleLoginSubmit(event) {
     event.preventDefault();
     clearFeedback();
     authForms.login.touchForm();
 
-    if (!authForms.login.isValid) {
-      setErrorMessage("Corregí los campos marcados para continuar.");
+    const payload = readFormCredentials(event.currentTarget);
+    const errors = validateLogin(payload);
+
+    if (Object.keys(errors).length > 0) {
+      setErrorMessage("Corregi los campos marcados para continuar.");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await login(authForms.login.values);
+      const response = await login(payload);
       setSuccessMessage(`Hola ${response.name}, ingreso exitoso.`);
     } catch (error) {
-      setErrorMessage(error.message || "Ocurrió un error inesperado.");
+      setErrorMessage(error.message || "Ocurrio un error inesperado.");
     } finally {
       setLoading(false);
     }
@@ -69,14 +81,17 @@ function AuthPage() {
     clearFeedback();
     authForms.register.touchForm();
 
-    if (!authForms.register.isValid) {
-      setErrorMessage("Revisá los datos para completar el registro.");
+    const payload = readFormCredentials(event.currentTarget);
+    const errors = validateRegister(payload);
+
+    if (Object.keys(errors).length > 0) {
+      setErrorMessage("Revisa los datos para completar el registro.");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await register(authForms.register.values);
+      const response = await register(payload);
       setSuccessMessage(`Cuenta creada para ${response.name}.`);
     } catch (error) {
       setErrorMessage(error.message || "No se pudo completar el registro.");
@@ -85,17 +100,12 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogleSignIn() {
+  async function handleGoogleCredential(credential) {
     clearFeedback();
-
-    const identifier =
-      mode === AUTH_MODES.LOGIN
-        ? authForms.login.values.name
-        : authForms.register.values.name;
 
     try {
       setLoading(true);
-      const response = await loginWithGoogle({ name: identifier });
+      const response = await loginWithGoogleCredential(credential);
       setSuccessMessage(`Hola ${response.name}, ingreso exitoso.`);
     } catch (error) {
       setErrorMessage(error.message || "No se pudo completar el ingreso con Google.");
@@ -116,7 +126,7 @@ function AuthPage() {
           onLoginChange={authForms.login.onChange}
           onLoginBlur={authForms.login.onBlur}
           onSwitchToRegister={() => handleModeChange(AUTH_MODES.REGISTER)}
-          onGoogleSignIn={handleGoogleSignIn}
+          onGoogleCredential={handleGoogleCredential}
         />
       ) : (
         <RegisterCard
@@ -128,7 +138,7 @@ function AuthPage() {
           onRegisterChange={authForms.register.onChange}
           onRegisterBlur={authForms.register.onBlur}
           onSwitchToLogin={() => handleModeChange(AUTH_MODES.LOGIN)}
-          onGoogleSignIn={handleGoogleSignIn}
+          onGoogleCredential={handleGoogleCredential}
         />
       )}
     </div>
