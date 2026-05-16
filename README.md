@@ -62,7 +62,7 @@ Visishop/
 
 ## Como ejecutar el proyecto
 
-### 1. Backend (`Visishop/`)
+### 1. Backend (`Visishop-backend/`)
 
 Requisitos:
 
