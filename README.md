@@ -2,7 +2,7 @@
 
 Visishop es un workspace con dos aplicaciones que cubren el flujo principal del MVP:
 
-- `Visishop-backend/`: backend Flask con autenticacion por usuario/clave y Google, JWT, CRUD de productos, lista de compras por usuario y verificacion por codigo de barras.
+- `Visishop/`: backend Flask con autenticacion por usuario/clave y Google, JWT, CRUD de productos, lista de compras por usuario y verificacion por codigo de barras.
 - `visishop-web/`: frontend React + Vite + Tailwind con experiencia web/mobile, login, lista de compras, carga por voz, escaneo con camara y feedback por voz.
 
 ## Estado actual del proyecto
@@ -26,7 +26,7 @@ Hoy el repositorio ya incluye:
 ```text
 Visishop/
 |-- README.md
-|-- Visishop-backend/                 # API Flask
+|-- Visishop/                 # API Flask
 |   |-- app.py
 |   |-- main/
 |   |-- services/
@@ -62,7 +62,7 @@ Visishop/
 
 ## Como ejecutar el proyecto
 
-### 1. Backend (`Visishop-backend/`)
+### 1. Backend (`Visishop/`)
 
 Requisitos:
 
@@ -72,7 +72,7 @@ Requisitos:
 Pasos:
 
 ```powershell
-cd Visishop-backend
+cd Visishop
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -169,7 +169,7 @@ Todos los endpoints bajo `/api` y `/auth/protected` usan JWT, salvo los de login
 El repo incluye un dataset offline en [Visishop/data/products_seed_off_family_20.json](/C:/Users/Usuario/Documents/GitHub/Visishop-backend/Visishop/data/products_seed_off_family_20.json) y un script para cargarlo en la base:
 
 ```powershell
-cd Visishop-backend
+cd Visishop
 .\.venv\Scripts\Activate.ps1
 python scripts/seed_products.py
 ```
@@ -185,7 +185,7 @@ python scripts/seed_products.py --overwrite
 Backend:
 
 ```powershell
-cd Visishop-backend
+cd Visishop
 .\.venv\Scripts\Activate.ps1
 pytest
 ```
