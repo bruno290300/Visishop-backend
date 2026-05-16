@@ -8,6 +8,11 @@ import {
 import {
   generateProductBarcode,
 } from "../features/barcode/services/mockBarcodeScanner";
+import { speakFeedback } from "../features/accessibility/services/speechFeedback";
+import {
+  findBestCatalogMatch,
+  findCatalogProductByBarcode,
+} from "../features/products/services/productCatalog";
 
 const ShoppingListContext = createContext(null);
 const STORAGE_KEY_V1 = "visishop.products.v1";
@@ -112,12 +117,10 @@ function shoppingListReducer(state, action) {
                 status: action.payload.isMatch ? "verified" : product.status,
                 isScanning: false,
                 scanFeedback: {
-                  type: action.payload.isMatch ? "success" : "error",
+                  type: action.payload.feedbackType,
                   scannedCode: action.payload.scannedCode,
                   expectedCode: action.payload.expectedCode,
-                  message: action.payload.isMatch
-                    ? "Codigo verificado correctamente."
-                    : "El codigo no coincide con este producto.",
+                  message: action.payload.message,
                 },
               }
             : product
@@ -147,11 +150,15 @@ export function ShoppingListProvider({ children }) {
 
   function addProduct(payload) {
     const isObjectPayload = payload && typeof payload === "object";
-    const normalizedName = String(
+    const requestedName = String(
       isObjectPayload ? payload.name : payload
     ).trim();
+    const catalogMatch = isObjectPayload ? null : findBestCatalogMatch(requestedName);
+    const normalizedName = catalogMatch?.name || requestedName;
     const normalizedBarcode = String(
-      isObjectPayload ? payload.barcode : generateProductBarcode(normalizedName)
+      isObjectPayload
+        ? payload.barcode
+        : catalogMatch?.barcode || generateProductBarcode(normalizedName)
     ).trim();
     if (!normalizedName || !normalizedBarcode) return;
 
@@ -175,12 +182,28 @@ export function ShoppingListProvider({ children }) {
     const expectedCode = normalizeCode(targetProduct.barcode);
     const receivedCode = normalizeCode(scannedCode);
     const isMatch = expectedCode === receivedCode;
+    const scannedCatalogProduct = findCatalogProductByBarcode(receivedCode);
+    const feedbackType = isMatch ? "success" : scannedCatalogProduct ? "error" : "warning";
+    const message = isMatch
+      ? "Codigo verificado correctamente."
+      : scannedCatalogProduct
+        ? "El codigo no coincide con este producto."
+        : "Producto no encontrado.";
+    const speechMessage = isMatch
+      ? `Producto correcto. ${targetProduct.name} encontrada.`
+      : scannedCatalogProduct
+        ? "Este producto no coincide con el de la lista."
+        : "Producto no encontrado.";
+
+    speakFeedback(speechMessage);
 
     dispatch({
       type: "SCAN_FINISH",
       payload: {
         id,
         isMatch,
+        feedbackType,
+        message,
         scannedCode: receivedCode || "sin-codigo",
         expectedCode,
       },

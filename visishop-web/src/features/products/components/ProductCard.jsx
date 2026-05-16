@@ -2,6 +2,7 @@ function ProductCard({ product, onScan }) {
   const isVerified = product.status === "verified";
   const isError = product.scanFeedback?.type === "error";
   const isSuccess = product.scanFeedback?.type === "success";
+  const isWarning = product.scanFeedback?.type === "warning";
 
   return (
     <article
@@ -11,7 +12,9 @@ function ProductCard({ product, onScan }) {
           ? "scan-error border-red-300/45"
           : isSuccess
             ? "border-emerald-300/40"
-            : "border-white/20",
+            : isWarning
+              ? "border-amber-300/40"
+              : "border-white/20",
       ].join(" ")}
     >
       <div className="flex items-start justify-between gap-3">
@@ -67,7 +70,9 @@ function ProductCard({ product, onScan }) {
             "mt-3 rounded-xl border px-3 py-2 text-xs",
             isSuccess
               ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-100"
-              : "border-red-300/40 bg-red-400/10 text-red-100",
+              : isWarning
+                ? "border-amber-300/40 bg-amber-300/10 text-amber-100"
+                : "border-red-300/40 bg-red-400/10 text-red-100",
           ].join(" ")}
         >
           <p className="font-semibold">{product.scanFeedback.message}</p>

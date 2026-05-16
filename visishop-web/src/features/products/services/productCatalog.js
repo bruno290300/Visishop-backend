@@ -85,3 +85,14 @@ export function findBestCatalogMatch(name) {
 export function getCatalogCount() {
   return catalog.length;
 }
+
+export function findCatalogProductByBarcode(barcode) {
+  const normalizedBarcode = String(barcode || "").trim().replace(/\s/g, "");
+  if (!normalizedBarcode) return null;
+
+  return (
+    catalog.find(
+      (item) => String(item.barcode || "").trim().replace(/\s/g, "") === normalizedBarcode
+    ) || null
+  );
+}

@@ -4,12 +4,21 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
+import requests
 from sqlalchemy import func
 
 from .extensions import db
 from .models import User
 
 auth_bp = Blueprint('auth', __name__)
+
+
+def build_google_request():
+    # Ignore machine-level proxy vars in local dev so token verification can
+    # fetch Google's certs directly.
+    session = requests.Session()
+    session.trust_env = False
+    return google_requests.Request(session=session)
 
 
 @auth_bp.route('/google/config', methods=['GET'])
@@ -77,7 +86,7 @@ def google_login():
     try:
         google_user = id_token.verify_oauth2_token(
             credential,
-            google_requests.Request(),
+            build_google_request(),
             client_id,
         )
     except ValueError as error:
